@@ -21,6 +21,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +61,20 @@ public class ProfileActivity extends AppCompatActivity {
         findViewById(R.id.viewDb).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startViewDatabase();
+                mAuth.signOut();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            FirebaseInstanceId.getInstance().deleteInstanceId();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+                System.out.println(FirebaseInstanceId.getInstance().getToken());
+                startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+//                startViewDatabase();
             }
 
         });
@@ -73,7 +87,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
 
-    private void loadUsers(){
+    private void loadUsers() {
         progressBar.setVisibility(View.VISIBLE);
         userList = new ArrayList<>();
         recyclerView = findViewById(R.id.recyclerview);
@@ -84,9 +98,9 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 progressBar.setVisibility(View.GONE);
-                if(dataSnapshot.exists()){
+                if (dataSnapshot.exists()) {
 
-                    for(DataSnapshot dsUser: dataSnapshot.getChildren()){
+                    for (DataSnapshot dsUser : dataSnapshot.getChildren()) {
 
                         User user = dsUser.getValue(User.class);
                         userList.add(user);
@@ -96,7 +110,7 @@ public class ProfileActivity extends AppCompatActivity {
                     UserAdapter adapter = new UserAdapter(ProfileActivity.this, userList);
                     recyclerView.setAdapter(adapter);
 
-                }else{
+                } else {
                     Toast.makeText(ProfileActivity.this, "No user found", Toast.LENGTH_LONG).show();
                 }
             }
