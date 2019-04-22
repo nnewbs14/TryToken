@@ -70,7 +70,7 @@ public class SendNotificationActivity extends AppCompatActivity {
 
         Api api = retrofit.create(Api.class);
 
-        Call<ResponseBody> call = api.sendNotification(user.token, title, body);
+        Call<ResponseBody> call = api.sendNotification(user.firebaseToken, title, body);
 
         call.enqueue(new Callback<ResponseBody>() {
             @Override

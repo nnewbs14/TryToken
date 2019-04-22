@@ -50,8 +50,8 @@ public class ProfileActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<InstanceIdResult> task) {
                         if (task.isSuccessful()) {
-                            String token = task.getResult().getToken();
-                            saveToken(token);
+                            String firebaseToken = task.getResult().getToken();
+                            saveToken(firebaseToken);
                         } else {
 
                         }
@@ -74,7 +74,7 @@ public class ProfileActivity extends AppCompatActivity {
                 }).start();
                 System.out.println(FirebaseInstanceId.getInstance().getToken());
                 startActivity(new Intent(ProfileActivity.this, MainActivity.class));
-//                startViewDatabase();
+                startViewDatabase();
             }
 
         });
@@ -133,9 +133,9 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    private void saveToken(String token) {
+    private void saveToken(String firebaseToken) {
         String email = mAuth.getCurrentUser().getEmail();
-        User user = new User(email, token);
+        User user = new User(email, firebaseToken);
 
         DatabaseReference dbUsers = FirebaseDatabase.getInstance().getReference(NODE_USERS);
 
